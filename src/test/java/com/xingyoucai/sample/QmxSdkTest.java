@@ -54,7 +54,7 @@ public class QmxSdkTest {
 		Map<String, String> map = new HashMap<String, String>();
 		map.put("mobile", "18652176511");
 		map.put("_time", String.valueOf(System.currentTimeMillis()));
-		String res=sdk.getMemberStatus(map);
+		String res=sdk.getSignKey(map);
 		System.out.println(res);
 	}
 }
