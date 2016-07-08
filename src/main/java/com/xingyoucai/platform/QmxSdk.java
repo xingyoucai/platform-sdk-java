@@ -19,13 +19,13 @@ import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.commons.httpclient.params.HttpMethodParams;
 import org.apache.commons.httpclient.protocol.Protocol;
 
-public class QmxSdkHttp {
+public class QmxSdk {
 
 	private String APP_ID, APP_SECRET;
 
 	private HttpClient httpClient;
 
-	public QmxSdkHttp(String app_id, String app_secret) {
+	public QmxSdk(String app_id, String app_secret) {
 		this.APP_ID = app_id;
 		this.APP_SECRET = app_secret;
 	}

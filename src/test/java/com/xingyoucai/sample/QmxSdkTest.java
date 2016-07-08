@@ -6,17 +6,17 @@ import java.util.Map;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.xingyoucai.platform.QmxSdkHttp;
+import com.xingyoucai.platform.QmxSdk;
 
-public class QmxSdkHttpTest {
+public class QmxSdkTest {
 	
-	private QmxSdkHttp sdk;
+	private QmxSdk sdk;
 	
 	@Before
 	public void init() {
 		String APP_ID = "wkb000111";
 		String APP_SECRET = "1f3lul1gnpkflwriaue05p5quwysgzv0";
-		sdk = new QmxSdkHttp(APP_ID, APP_SECRET);
+		sdk = new QmxSdk(APP_ID, APP_SECRET);
 	}
 	
 	@Test
