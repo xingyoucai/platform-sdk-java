@@ -65,8 +65,15 @@ public class QmxSdk {
 		return request(Const.LEVEL, paramsMap);
 	}
 
+	public String login(Map<String, String> paramsMap) throws Exception {
+		return execute(Const.LOGIN, paramsMap);
+	}
+	
 	private String request(String url, Map<String, String> paramsMap) throws Exception {
 		signData(paramsMap);
+		return execute(url, paramsMap);
+	}
+	private String execute(String url, Map<String, String> paramsMap)throws Exception {
 		NameValuePair[] pairs = new NameValuePair[paramsMap.size()];
 		int i = 0;
 		for (String k : paramsMap.keySet()) {
@@ -75,7 +82,7 @@ public class QmxSdk {
 		}
 		PostMethod post = new PostMethod(url);
 		post.setRequestBody(pairs);
-		getHttpClient().executeMethod(post);
+		int status=getHttpClient().executeMethod(post);
 		String res = post.getResponseBodyAsString();
 		post.releaseConnection();
 		return res;
