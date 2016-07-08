@@ -11,7 +11,6 @@ import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 
 import org.apache.commons.codec.binary.Base64;
-import org.apache.commons.httpclient.HostConfiguration;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.NameValuePair;
 import org.apache.commons.httpclient.contrib.ssl.EasySSLProtocolSocketFactory;
@@ -126,11 +125,8 @@ public class QmxSdk {
 			Protocol.registerProtocol(Const.HTTPS, protocol);
 
 			httpClient = new HttpClient();
+			httpClient.getHostConfiguration().setHost(Const.HOST, 443, protocol);
 			httpClient.getParams().setParameter(HttpMethodParams.HTTP_CONTENT_CHARSET, "UTF-8");
-			
-			HostConfiguration hostConfiguration = new HostConfiguration();
-			hostConfiguration.setHost(Const.HOST, 80, protocol);
-			httpClient.setHostConfiguration(hostConfiguration);
 		}
 		return httpClient;
 	}
