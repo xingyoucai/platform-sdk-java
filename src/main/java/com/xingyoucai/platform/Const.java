@@ -2,9 +2,9 @@ package com.xingyoucai.platform;
 
 public class Const {
 
-	public static final String SCHEME = "http";
+	public static final String SCHEME = "https";
 
-	public static final String HOST = "wkb-qiye.hyh.xingyoucai.com";//w-ssl.xingyoucai.com";
+	public static final String HOST = "w-ssl.xingyoucai.com";
 	
 	public static final String MEMBERSTATUS = SCHEME + "://" + HOST + "/apiuser/getMemberStatus";
 
@@ -15,4 +15,6 @@ public class Const {
 	public static final String REGISTER = SCHEME + "://" + HOST + "/apiuser/register";
 	
 	public static final String LOGIN = SCHEME + "://" + HOST + "/passport/login";
+	
+	public static final String LOGIN_COOKIE="TRADEVESTING_PASSPORT_MEMBER_";
 }

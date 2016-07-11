@@ -2,10 +2,13 @@ package com.xingyoucai.sample;
 
 import java.util.HashMap;
 import java.util.Map;
+
+import org.apache.commons.httpclient.Cookie;
 import org.junit.Before;
 import org.junit.Test;
 
 import com.google.gson.Gson;
+import com.xingyoucai.platform.Const;
 import com.xingyoucai.platform.QmxSdk;
 
 public class QmxSdkTest {
@@ -14,8 +17,8 @@ public class QmxSdkTest {
 	
 	@Before
 	public void init() throws Exception {
-		String APP_ID = "wkb000111";
-		String APP_SECRET = "1f3lul1gnpkflwriaue05p5quwysgzv0";
+		String APP_ID = "wkb0000";
+		String APP_SECRET = "u7alul1gnpk2dfgiaue05p5quwysgg8k";
 		sdk = new QmxSdk(APP_ID, APP_SECRET);
 		sdk.setDebugEnable(true);
 	}
@@ -37,10 +40,19 @@ public class QmxSdkTest {
 		paramsMap.put("signKey", result.getData().getSignKey());
 		paramsMap.put("return_url","https://xingyoucai.com" );
 		sdk.login(paramsMap);
-
+		
+		//
+		boolean status=false;
+		Cookie[] cookies= sdk.getHttpClient().getState().getCookies();
+		for(Cookie cookie:cookies){
+			if(cookie.getName().contains(Const.LOGIN_COOKIE)){
+				status=true;
+				break;
+			}
+		}
+		sdk.getLoger().debug(status?"login success":"login failed");
 	}
 
-	@Test
 	public void getMemberStatus() throws Exception {
 		Map<String, String> map = new HashMap<String, String>();
 		map.put("mobile", "18652176511");
@@ -48,7 +60,6 @@ public class QmxSdkTest {
 		String res = sdk.getMemberStatus(map);
 	}
 	
-	@Test
 	public void register() throws Exception {
 		Map<String, String> map = new HashMap<String, String>();
 		map.put("login_name", "fushizhe");
@@ -58,7 +69,6 @@ public class QmxSdkTest {
 		String res = sdk.register(map);
 	}
 	
-	@Test
 	public void changeLevel() throws Exception {
 		Map<String, String> map = new HashMap<String, String>();
 		map.put("mobile", "18652176511");

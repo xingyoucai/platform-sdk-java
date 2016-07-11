@@ -43,6 +43,10 @@ public class QmxSdk {
 	public void setDebugEnable(boolean enable){
 		logger.setLevel(enable?Level.DEBUG:Level.OFF);
 	}
+	
+	public Logger getLoger(){
+		return logger;
+	}
 
 	/**
 	 * 获取用户注册状态
@@ -102,6 +106,7 @@ public class QmxSdk {
 	
 	private String doGet(String url, Map<String, String> paramsMap) throws Exception {
 		GetMethod get = new GetMethod(url);
+		get.getParams().setParameter(HttpMethodParams.HTTP_CONTENT_CHARSET, "UTF-8");
 		get.setQueryString(getParams(paramsMap));
 		if(logger.isDebugEnabled())logger.debug(url+"?"+get.getQueryString());
 		getHttpClient().executeMethod(get);
@@ -160,16 +165,17 @@ public class QmxSdk {
 		return Base64.encodeBase64String(sha256_HMAC.doFinal(data.getBytes()));
 	}
 
-	private HttpClient getHttpClient() throws GeneralSecurityException, IOException {
+	public HttpClient getHttpClient() throws GeneralSecurityException, IOException {
 		if (httpClient == null) {
 			httpClient = new HttpClient();
 			if(Const.SCHEME.equals("https")){
 				Protocol protocol = new Protocol(Const.SCHEME, new EasySSLProtocolSocketFactory(), 443);
 				Protocol.registerProtocol(Const.SCHEME, protocol);
-				httpClient.getHostConfiguration().setHost(Const.HOST, 443, protocol);
+				httpClient.getHostConfiguration().setHost(Const.HOST, 443, protocol);			
 			}
+			
 			httpClient.getParams().setParameter(HttpMethodParams.HTTP_CONTENT_CHARSET, "UTF-8");
-			httpClient.getParams().setParameter("http.protocol.cookie-policy", CookiePolicy.BROWSER_COMPATIBILITY);
+			httpClient.getParams().setCookiePolicy(CookiePolicy.BROWSER_COMPATIBILITY);
 		}
 		return httpClient;
 	}
