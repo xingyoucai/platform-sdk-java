@@ -14,6 +14,7 @@ import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.NameValuePair;
 import org.apache.commons.httpclient.contrib.ssl.EasySSLProtocolSocketFactory;
+import org.apache.commons.httpclient.cookie.CookiePolicy;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.commons.httpclient.params.HttpMethodParams;
@@ -94,10 +95,8 @@ public class QmxSdk {
 		signData(paramsMap);
 		NameValuePair[] params = new NameValuePair[paramsMap.size()];
 		int i = 0;
-		System.out.print("http://wkb-qiye.hyh.xingyoucai.com/passport/login?");
 		for (String k : paramsMap.keySet()) {
 			params[i] = new NameValuePair(k, paramsMap.get(k));
-			System.out.print(k+"="+paramsMap.get(k)+"&");
 			i++;
 		}
 		return params;
@@ -106,7 +105,6 @@ public class QmxSdk {
 	private Map<String, String> signData(Map<String, String> map) throws Exception {
 		map.put("appid", APP_ID);
 		String plaintext = httpBuildQuery(kSort(map));
-		System.out.println("aa:"+plaintext);
 		String cipherText = hashHmac(plaintext, APP_SECRET);
 		map.put("sign", URLEncoder.encode(cipherText));
 		return map;
@@ -151,6 +149,7 @@ public class QmxSdk {
 				httpClient.getHostConfiguration().setHost(Const.HOST, 443, protocol);
 			}
 			httpClient.getParams().setParameter(HttpMethodParams.HTTP_CONTENT_CHARSET, "UTF-8");
+			httpClient.getParams().setParameter("http.protocol.cookie-policy", CookiePolicy.BROWSER_COMPATIBILITY);
 		}
 		return httpClient;
 	}

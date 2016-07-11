@@ -25,6 +25,7 @@ public class QmxSdkTest {
 		params.put("mobile", "18652176511");
 		params.put("_time", String.valueOf(System.currentTimeMillis()));
 		String json=sdk.getSignKey(params);
+		System.out.println(json);
 		Result result=new Gson().fromJson(json, Result.class);
 		if(result==null)return;
 		if(result.getErrcode()!=0){
