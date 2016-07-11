@@ -19,16 +19,29 @@ import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.commons.httpclient.params.HttpMethodParams;
 import org.apache.commons.httpclient.protocol.Protocol;
+import org.apache.log4j.ConsoleAppender;
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
+import org.apache.log4j.PatternLayout;
 
 public class QmxSdk {
 
 	private String APP_ID, APP_SECRET;
 
 	private HttpClient httpClient;
+	
+	private Logger logger ;
 
 	public QmxSdk(String app_id, String app_secret) {
 		this.APP_ID = app_id;
 		this.APP_SECRET = app_secret;
+		logger=Logger.getLogger(getClass());
+	    logger.addAppender(new ConsoleAppender(new PatternLayout("%p %d [%t] %c.%M(%L) | %m%n")));
+	    setLogEnable(false);
+	}
+	
+	public void setLogEnable(boolean enable){
+		logger.setLevel(enable?Level.DEBUG:Level.OFF);
 	}
 
 	/**
@@ -74,10 +87,15 @@ public class QmxSdk {
 	}
 
 	private String doPost(String url, Map<String, String> paramsMap) throws Exception {
+		if(logger.isDebugEnabled())logger.info(url);
 		PostMethod post = new PostMethod(url);
 		post.setRequestBody(getParams(paramsMap));
 		int status = getHttpClient().executeMethod(post);
 		String res = post.getResponseBodyAsString();
+		if(logger.isDebugEnabled()){
+			logger.debug(status);
+			logger.debug(res);
+		}
 		post.releaseConnection();
 		return res;
 	}
@@ -85,6 +103,7 @@ public class QmxSdk {
 	private String doGet(String url, Map<String, String> paramsMap) throws Exception {
 		GetMethod get = new GetMethod(url);
 		get.setQueryString(getParams(paramsMap));
+		if(logger.isDebugEnabled())logger.debug(url+"?"+get.getQueryString());
 		getHttpClient().executeMethod(get);
 		String res = get.getResponseBodyAsString();
 		get.releaseConnection();
@@ -97,6 +116,7 @@ public class QmxSdk {
 		int i = 0;
 		for (String k : paramsMap.keySet()) {
 			params[i] = new NameValuePair(k, paramsMap.get(k));
+			if(logger.isDebugEnabled())logger.debug(k+"="+paramsMap.get(k));
 			i++;
 		}
 		return params;
