@@ -17,7 +17,7 @@ public class QmxSdkTest {
 		String APP_ID = "wkb000111";
 		String APP_SECRET = "1f3lul1gnpkflwriaue05p5quwysgzv0";
 		sdk = new QmxSdk(APP_ID, APP_SECRET);
-		sdk.setLogEnable(true);
+		sdk.setDebugEnable(true);
 	}
 	
 	@Test

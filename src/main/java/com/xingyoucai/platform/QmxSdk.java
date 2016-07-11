@@ -37,10 +37,10 @@ public class QmxSdk {
 		this.APP_SECRET = app_secret;
 		logger=Logger.getLogger(getClass());
 	    logger.addAppender(new ConsoleAppender(new PatternLayout("%p %d [%t] %c.%M(%L) | %m%n")));
-	    setLogEnable(false);
+	    setDebugEnable(false);
 	}
 	
-	public void setLogEnable(boolean enable){
+	public void setDebugEnable(boolean enable){
 		logger.setLevel(enable?Level.DEBUG:Level.OFF);
 	}
 
