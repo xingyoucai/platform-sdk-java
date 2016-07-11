@@ -14,6 +14,7 @@ import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.NameValuePair;
 import org.apache.commons.httpclient.contrib.ssl.EasySSLProtocolSocketFactory;
+import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.commons.httpclient.params.HttpMethodParams;
 import org.apache.commons.httpclient.protocol.Protocol;
@@ -35,7 +36,7 @@ public class QmxSdk {
 	 * @throws Exception
 	 */
 	public String getMemberStatus(Map<String, String> paramsMap) throws Exception {
-		return request(Const.MEMBERSTATUS, paramsMap);
+		return doPost(Const.MEMBERSTATUS, paramsMap);
 	}
 
 	/**
@@ -44,7 +45,7 @@ public class QmxSdk {
 	 * @throws Exception
 	 */
 	public String getSignKey(Map<String, String> paramsMap) throws Exception {
-		return request(Const.SIGNKEY, paramsMap);
+		return doPost(Const.SIGNKEY, paramsMap);
 	}
 
 	/**
@@ -53,7 +54,7 @@ public class QmxSdk {
 	 * @throws Exception
 	 */
 	public String register(Map<String, String> paramsMap) throws Exception {
-		return request(Const.REGISTER, paramsMap);
+		return doPost(Const.REGISTER, paramsMap);
 	}
 
 	/**
@@ -62,35 +63,50 @@ public class QmxSdk {
 	 * @throws Exception
 	 */
 	public String changeLevel(Map<String, String> paramsMap) throws Exception {
-		return request(Const.LEVEL, paramsMap);
+		return doPost(Const.LEVEL, paramsMap);
 	}
 
 	public String login(Map<String, String> paramsMap) throws Exception {
-		return execute(Const.LOGIN, paramsMap);
+		if(paramsMap.containsKey("return_url"))
+			paramsMap.put("return_url", Base64.encodeBase64String(paramsMap.get("return_url").getBytes()));
+		return doGet(Const.LOGIN, paramsMap);
 	}
-	
-	private String request(String url, Map<String, String> paramsMap) throws Exception {
-		signData(paramsMap);
-		return execute(url, paramsMap);
-	}
-	private String execute(String url, Map<String, String> paramsMap)throws Exception {
-		NameValuePair[] pairs = new NameValuePair[paramsMap.size()];
-		int i = 0;
-		for (String k : paramsMap.keySet()) {
-			pairs[i] = new NameValuePair(k, paramsMap.get(k));
-			i++;
-		}
+
+	private String doPost(String url, Map<String, String> paramsMap) throws Exception {
 		PostMethod post = new PostMethod(url);
-		post.setRequestBody(pairs);
-		int status=getHttpClient().executeMethod(post);
+		post.setRequestBody(getParams(paramsMap));
+		int status = getHttpClient().executeMethod(post);
 		String res = post.getResponseBodyAsString();
 		post.releaseConnection();
 		return res;
+	}
+	
+	private String doGet(String url, Map<String, String> paramsMap) throws Exception {
+		GetMethod get = new GetMethod(url);
+		get.setQueryString(getParams(paramsMap));
+		getHttpClient().executeMethod(get);
+		String res = get.getResponseBodyAsString();
+		get.releaseConnection();
+		return res;
+	}
+
+	private NameValuePair[] getParams(Map<String, String> paramsMap) throws Exception {
+		signData(paramsMap);
+		NameValuePair[] params = new NameValuePair[paramsMap.size()];
+		int i = 0;
+		System.out.print("http://wkb-qiye.hyh.xingyoucai.com/passport/login?");
+		for (String k : paramsMap.keySet()) {
+			params[i] = new NameValuePair(k, paramsMap.get(k));
+			System.out.print(k+"="+paramsMap.get(k)+"&");
+			i++;
+		}
+		return params;
 	}
 
 	private Map<String, String> signData(Map<String, String> map) throws Exception {
 		map.put("appid", APP_ID);
 		String plaintext = httpBuildQuery(kSort(map));
+		System.out.println("aa:"+plaintext);
 		String cipherText = hashHmac(plaintext, APP_SECRET);
 		map.put("sign", URLEncoder.encode(cipherText));
 		return map;
@@ -128,11 +144,12 @@ public class QmxSdk {
 
 	private HttpClient getHttpClient() throws GeneralSecurityException, IOException {
 		if (httpClient == null) {
-			Protocol protocol = new Protocol(Const.HTTPS, new EasySSLProtocolSocketFactory(), 443);
-			Protocol.registerProtocol(Const.HTTPS, protocol);
-
 			httpClient = new HttpClient();
-			httpClient.getHostConfiguration().setHost(Const.HOST, 443, protocol);
+			if(Const.SCHEME.equals("https")){
+				Protocol protocol = new Protocol(Const.SCHEME, new EasySSLProtocolSocketFactory(), 443);
+				Protocol.registerProtocol(Const.SCHEME, protocol);
+				httpClient.getHostConfiguration().setHost(Const.HOST, 443, protocol);
+			}
 			httpClient.getParams().setParameter(HttpMethodParams.HTTP_CONTENT_CHARSET, "UTF-8");
 		}
 		return httpClient;

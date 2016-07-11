@@ -2,7 +2,6 @@ package com.xingyoucai.sample;
 
 import java.util.HashMap;
 import java.util.Map;
-
 import org.junit.Before;
 import org.junit.Test;
 
@@ -13,21 +12,19 @@ public class QmxSdkTest {
 	
 	private QmxSdk sdk;
 	
-	private String APP_ID = "wkb0001", APP_SECRET = "u7alul1gnpk2swriaue05p5quwysgg8k";
-	
 	@Before
 	public void init() throws Exception {
+		String APP_ID = "wkb000111";
+		String APP_SECRET = "1f3lul1gnpkflwriaue05p5quwysgzv0";
 		sdk = new QmxSdk(APP_ID, APP_SECRET);
 	}
 	
 	@Test
 	public void login() throws Exception {
-		
-		Map<String, String> map1 = new HashMap<String, String>();
-		map1.put("mobile", "18652176511");
-		map1.put("_time", String.valueOf(System.currentTimeMillis()));
-		String json=sdk.getSignKey(map1);
-		System.out.println(json);
+		Map<String, String> params = new HashMap<String, String>();
+		params.put("mobile", "18652176511");
+		params.put("_time", String.valueOf(System.currentTimeMillis()));
+		String json=sdk.getSignKey(params);
 		Result result=new Gson().fromJson(json, Result.class);
 		if(result==null)return;
 		if(result.getErrcode()!=0){
@@ -35,16 +32,13 @@ public class QmxSdkTest {
 			return;
 		}
 		
-		Map<String, String> map = new HashMap<String, String>();
-		map.put("appid", APP_ID);
-		map.put("signKey", result.getData().getSignKey());
-		map.put("return_url", "https://xingyoucai.com");
-		String res = sdk.login(map);
-		System.out.println(res);
+		Map<String, String> paramsMap = new HashMap<String, String>();
+		paramsMap.put("signKey", result.getData().getSignKey());
+		paramsMap.put("return_url","https://xingyoucai.com" );
+		sdk.login(paramsMap);
 
 	}
 	
-	@Test
 	public void getMemberStatus() throws Exception {
 		Map<String, String> map = new HashMap<String, String>();
 		map.put("mobile", "18652176511");
@@ -53,7 +47,6 @@ public class QmxSdkTest {
 		System.out.println(res);
 	}
 	
-	@Test
 	public void register() throws Exception {
 		Map<String, String> map = new HashMap<String, String>();
 		map.put("login_name", "fushizhe");
@@ -64,7 +57,6 @@ public class QmxSdkTest {
 		System.out.println(res);
 	}
 	
-	@Test
 	public void changeLevel() throws Exception {
 		Map<String, String> map = new HashMap<String, String>();
 		map.put("mobile", "18652176511");
